@@ -1,40 +1,33 @@
 <!DOCTYPE html>
-<html lang="es" >
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <title>Login - Control Financiero</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: "Inter", sans-serif;
     }
   </style>
 </head>
-<body class="min-h-screen bg-gray-900 flex items-center justify-center relative overflow-hidden" style="background-image: url('https://wallpapers.com/images/hd/gold-bitcoin-finance-pk99ynbtnglf4phz.jpg');">
+<body class="min-h-screen bg-gray-900 flex items-center justify-center relative overflow-hidden"
+      style="background-image: url('https://wallpapers.com/images/hd/gold-bitcoin-finance-pk99ynbtnglf4phz.jpg');">
 
   <!-- Fondo oscuro -->
   <div class="absolute inset-0 bg-black bg-opacity-70 z-0"></div>
 
-  <div
-    class="relative z-10 flex w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden bg-white"
-    style="height: 600px"
-  >
+  <div class="relative z-10 flex flex-col md:flex-row w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden bg-white">
+    
     <!-- Lado izquierdo informativo -->
-    <div
-      class="hidden md:flex flex-col justify-center bg-gradient-to-tr from-indigo-700 via-indigo-900 to-indigo-800 text-white p-16 w-1/2"
-    >
-      <h1 class="text-4xl font-bold mb-4">Sistema de Control Financiero</h1>
-      <p class="mb-6 text-lg leading-relaxed">
+    <div class="hidden md:flex flex-col justify-center bg-gradient-to-tr from-indigo-700 via-indigo-900 to-indigo-800 text-white p-8 md:p-16 w-full md:w-1/2">
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">Sistema de Control Financiero</h1>
+      <p class="mb-6 text-base md:text-lg leading-relaxed">
         Administra tus gastos e ingresos con facilidad y mantén tus finanzas
-        siempre bajo control. Visualiza reportes claros y toma mejores
-        decisiones.
+        siempre bajo control. Visualiza reportes claros y toma mejores decisiones.
       </p>
-      <ul class="list-disc list-inside space-y-2 text-indigo-200">
+      <ul class="list-disc list-inside space-y-2 text-indigo-200 text-sm md:text-base">
         <li>Registro rápido y sencillo de gastos</li>
         <li>Filtrado y reportes detallados</li>
         <li>Interfaz moderna y segura</li>
@@ -43,60 +36,38 @@
     </div>
 
     <!-- Lado derecho formulario -->
-    <div class="w-full md:w-1/2 flex flex-col justify-center p-12">
-      <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+    <div class="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 text-center">
         Iniciar Sesión
       </h2>
 
       {% if messages %}
       <div class="mb-6">
         {% for message in messages %}
-        <div
-          class="bg-red-100 text-red-700 text-sm p-3 rounded mb-2 border border-red-300"
-        >
+        <div class="bg-red-100 text-red-700 text-sm p-3 rounded mb-2 border border-red-300">
           {{ message }}
         </div>
         {% endfor %}
       </div>
       {% endif %}
 
-      <form method="post" class="space-y-6">
+      <form method="post" class="space-y-4 md:space-y-6">
         {% csrf_token %}
 
         <div>
-          <label
-            for="username"
-            class="block text-sm font-medium text-gray-700 mb-1"
-            >Usuario</label
-          >
-          <input
-            type="text"
-            name="username"
-            id="username"
-            required
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+          <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
+          <input type="text" name="username" id="username" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
         </div>
 
         <div>
-          <label
-            for="password"
-            class="block text-sm font-medium text-gray-700 mb-1"
-            >Contraseña</label
-          >
-          <input
-            type="password"
-            name="password"
-            id="password"
-            required
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+          <input type="password" name="password" id="password" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
         </div>
 
-        <button
-          type="submit"
-          class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
-        >
+        <button type="submit"
+                class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
           Entrar
         </button>
       </form>
