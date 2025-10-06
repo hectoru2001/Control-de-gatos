@@ -1,0 +1,260 @@
+{% extends 'templates/base.html' %}
+
+{% block content %}
+<!-- Contenido principal -->
+<main id="content" class="flex-1 p-6 overflow-auto w-full transition-all duration-300">
+
+  <!-- Encabezado -->
+  <h1 class="text-2xl font-bold mb-6">Resumen Financiero</h1>
+
+  <!-- Tarjetas principales -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    
+    <!-- Total Gastos -->
+    <div class="bg-white p-6 rounded-2xl shadow-md border-l-4 border-red-500">
+      <h2 class="text-lg font-semibold text-gray-700">Gastos</h2>
+      <p class="text-3xl font-bold text-gray-800">
+        ${{ total_gastos|floatformat:2 }}
+      </p>
+      <p class="text-sm text-gray-500 mt-1">{{ gastos_count }} transacciones</p>
+    </div>
+
+    <!-- Total Ingresos -->
+    <div class="bg-white p-6 rounded-2xl shadow-md border-l-4 border-green-500">
+      <h2 class="text-lg font-semibold text-gray-700">Ingresos</h2>
+      <p class="text-3xl font-bold text-gray-800">
+        ${{ total_ingresos|floatformat:2 }}
+      </p>
+      <p class="text-sm text-gray-500 mt-1">{{ ingresos_count }} transacciones</p>
+    </div>
+
+    <!-- Balance -->
+    <div class="bg-white p-6 rounded-2xl shadow-md border-l-4 
+                {% if balance >= 0 %}border-blue-500{% else %}border-red-500{% endif %}">
+      <h2 class="text-lg font-semibold text-gray-700">Balance</h2>
+      <p class="text-3xl font-bold 
+                {% if balance >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+        ${{ balance|floatformat:2 }}
+      </p>
+      <p class="text-sm text-gray-500 mt-1">
+        {% if balance >= 0 %}Positivo{% else %}Negativo{% endif %}
+      </p>
+    </div>
+
+    <!-- Porcentaje de Ahorro -->
+    <div class="bg-white p-6 rounded-2xl shadow-md border-l-4 border-purple-500">
+      <h2 class="text-lg font-semibold text-gray-700">Tasa de Ahorro</h2>
+      <p class="text-3xl font-bold text-purple-600">
+        {{ tasa_ahorro|floatformat:1 }}%
+      </p>
+      <p class="text-sm text-gray-500 mt-1">
+        {% if tasa_ahorro >= 20 %}Excelente{% elif tasa_ahorro >= 10 %}Bueno{% else %}Por mejorar{% endif %}
+      </p>
+    </div>
+  </div>
+
+  <!-- Estadísticas mensuales -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    
+    <!-- Gastos del mes actual -->
+    <div class="bg-white p-6 rounded-2xl shadow-md">
+      <h2 class="text-lg font-semibold text-gray-700 mb-4">Gastos del Mes Actual</h2>
+      <div class="flex items-center">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mr-4">
+          <span class="text-red-600 font-bold text-lg">${{ gastos_mes_actual|floatformat:2 }}</span>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">
+            {% if gastos_mes_anterior > 0 %}
+              {% if gastos_mes_actual > gastos_mes_anterior %}
+                <span class="text-red-500">▲ {{ variacion_gastos|floatformat:1 }}%</span> vs mes anterior
+              {% else %}
+                <span class="text-green-500">▼ {{ variacion_gastos|floatformat:1 }}%</span> vs mes anterior
+              {% endif %}
+            {% else %}
+              Sin datos del mes anterior
+            {% endif %}
+          </p>
+          <p class="text-xs text-gray-500">Promedio diario: ${{ gastos_promedio_diario|floatformat:2 }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ingresos del mes actual -->
+    <div class="bg-white p-6 rounded-2xl shadow-md">
+      <h2 class="text-lg font-semibold text-gray-700 mb-4">Ingresos del Mes Actual</h2>
+      <div class="flex items-center">
+        <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mr-4">
+          <span class="text-green-600 font-bold text-lg">${{ ingresos_mes_actual|floatformat:2 }}</span>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">
+            {% if ingresos_mes_anterior > 0 %}
+              {% if ingresos_mes_actual > ingresos_mes_anterior %}
+                <span class="text-green-500">▲ {{ variacion_ingresos|floatformat:1 }}%</span> vs mes anterior
+              {% else %}
+                <span class="text-red-500">▼ {{ variacion_ingresos|floatformat:1 }}%</span> vs mes anterior
+              {% endif %}
+            {% else %}
+              Sin datos del mes anterior
+            {% endif %}
+          </p>
+          <p class="text-xs text-gray-500">Promedio diario: ${{ ingresos_promedio_diario|floatformat:2 }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos y distribuciones -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    
+    <!-- Distribución de Gastos -->
+    <div class="bg-white p-6 rounded-2xl shadow-md">
+      <h2 class="text-lg font-semibold text-gray-700 mb-4">Distribución de Gastos</h2>
+      <div class="space-y-4">
+        {% for cat in categorias %}
+        <div>
+          <div class="flex justify-between mb-1">
+            <span class="text-sm font-medium text-gray-700">{{ cat.categoria }}</span>
+            <span class="text-sm text-gray-500">${{ cat.total|floatformat:2 }} ({{ cat.porcentaje }}%)</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="h-2 rounded-full" 
+                 style="width: {{ cat.porcentaje }}%; background-color: {{ cat.color }}"></div>
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-gray-500 text-sm">No hay datos de categorías</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Distribución de Ingresos -->
+    <div class="bg-white p-6 rounded-2xl shadow-md">
+      <h2 class="text-lg font-semibold text-gray-700 mb-4">Distribución de Ingresos</h2>
+      <div class="space-y-4">
+        {% for cat in categorias_ingresos %}
+        <div>
+          <div class="flex justify-between mb-1">
+            <span class="text-sm font-medium text-gray-700">{{ cat.categoria }}</span>
+            <span class="text-sm text-gray-500">${{ cat.total|floatformat:2 }} ({{ cat.porcentaje }}%)</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="h-2 rounded-full" 
+                 style="width: {{ cat.porcentaje }}%; background-color: {{ cat.color }}"></div>
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-gray-500 text-sm">No hay datos de categorías de ingresos</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Tablas de transacciones -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    
+    <!-- Últimos Gastos -->
+    <div class="bg-white p-6 rounded-2xl shadow-md">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold text-gray-700">Últimos Gastos</h2>
+        <a href="{% url 'gasto_list' %}" class="text-sm text-blue-600 hover:text-blue-800">Ver todos</a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Fecha</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Categoría</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Descripción</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Monto</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            {% for gasto in gastos %}
+            <tr>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ gasto.fecha|date:"d/m/Y" }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">
+                <span class="inline-block w-3 h-3 rounded-full mr-1" style="background-color: {{ gasto.color_categoria }}"></span>
+                {{ gasto.categoria }}
+              </td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ gasto.descripcion|default:"-"|truncatechars:20 }}</td>
+              <td class="px-4 py-2 text-sm font-medium text-red-600">${{ gasto.monto|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="px-4 py-2 text-center text-sm text-gray-500">No hay gastos recientes</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Últimos Ingresos -->
+    <div class="bg-white p-6 rounded-2xl shadow-md">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold text-gray-700">Últimos Ingresos</h2>
+        <a href="{% url 'ingreso_list' %}" class="text-sm text-blue-600 hover:text-blue-800">Ver todos</a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Fecha</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Categoría</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Descripción</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Monto</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            {% for ingreso in ingresos %}
+            <tr>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ ingreso.fecha|date:"d/m/Y" }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">
+                <span class="inline-block w-3 h-3 rounded-full mr-1" style="background-color: {{ ingreso.color_categoria }}"></span>
+                {{ ingreso.categoria }}
+              </td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ ingreso.descripcion|default:"-"|truncatechars:20 }}</td>
+              <td class="px-4 py-2 text-sm font-medium text-green-600">${{ ingreso.monto|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="px-4 py-2 text-center text-sm text-gray-500">No hay ingresos recientes</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumen por período -->
+  <div class="bg-white p-6 rounded-2xl shadow-md mb-6">
+    <h2 class="text-lg font-semibold text-gray-700 mb-4">Resumen por Período</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="text-center p-4 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-500">Hoy</p>
+        <p class="text-lg font-semibold text-gray-800">${{ gastos_hoy|floatformat:2 }}</p>
+        <p class="text-xs text-gray-500">Gastos</p>
+      </div>
+      <div class="text-center p-4 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-500">Esta Semana</p>
+        <p class="text-lg font-semibold text-gray-800">${{ gastos_semana|floatformat:2 }}</p>
+        <p class="text-xs text-gray-500">Gastos</p>
+      </div>
+      <div class="text-center p-4 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-500">Este Mes</p>
+        <p class="text-lg font-semibold text-gray-800">${{ gastos_mes_actual|floatformat:2 }}</p>
+        <p class="text-xs text-gray-500">Gastos</p>
+      </div>
+      <div class="text-center p-4 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-500">Este Año</p>
+        <p class="text-lg font-semibold text-gray-800">${{ gastos_anio_actual|floatformat:2 }}</p>
+        <p class="text-xs text-gray-500">Gastos</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+{% endblock %}

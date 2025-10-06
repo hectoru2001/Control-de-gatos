@@ -1,0 +1,26 @@
+{% extends 'templates/base.html' %}
+
+{% block title %}Nuevo Ingreso{% endblock %}
+
+{% block content %}
+<main class="flex-1 md:ml-64 p-6 overflow-auto w-full transition-all duration-300">
+  <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-bold">Nuevo Ingreso</h1>
+    </div>
+    <a href="{% url 'ingreso_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow">
+      Volver
+    </a>
+  </header>
+
+  <div class="bg-white shadow rounded-lg p-6">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow">
+        Guardar
+      </button>
+    </form>
+  </div>
+</main>
+{% endblock %}

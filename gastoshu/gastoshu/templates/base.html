@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Dashboard - Control Financiero{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 flex min-h-screen">
+
+  {% include 'templates/sidebar.html' %}
+
+  <div id="content" class="resp flex-1 md:ml-64 p-6 overflow-auto w-full transition-all duration-300">
+
+    {% block content %}{% endblock %}
+
+  </div>
+
+  <script src="{% static 'js/sidebar.js' %}"></script>
+</body>
+</html>
